@@ -1,0 +1,137 @@
+buka web : https://dbdiagram.io
+
+Copykan data dibawah ini :
+
+Table "master_agama" {
+  "inc_agama" int(3) [not null, increment]
+  "id_agama" varchar(10) [not null]
+  "nama_agama" varchar(20) [not null]
+  "deskripsi_agama" varchar(100) [not null]
+  "isactive_agama" int(1) [not null, default: 0]
+
+Indexes {
+  inc_agama [unique, name: "inc_agama"]
+  (inc_agama, id_agama) [pk]
+}
+}
+
+Table "master_kelas" {
+  "inc_kelas" int(3) [not null, increment]
+  "id_kelas" varchar(10) [not null]
+  "nama_kelas" varchar(15) [not null]
+  "deskripsi_kelas" varchar(100) [default: NULL]
+  "isactive_kelas" int(1) [not null, default: 0]
+
+Indexes {
+  inc_kelas [unique, name: "inc_kelas"]
+  (inc_kelas, id_kelas) [pk]
+}
+}
+
+Table "master_level" {
+  "inc_level" int(3) [not null, increment]
+  "id_level" varchar(5) [not null]
+  "nama_level" varchar(20) [not null]
+  "deskripsi_level" varchar(100) [not null]
+  "isactive_level" int(1) [not null, default: 1]
+
+Indexes {
+  inc_level [unique, name: "inc_level"]
+  (inc_level, id_level) [pk]
+}
+}
+
+Table "master_menu" {
+  "kode_menu" varchar(5) [pk, not null]
+  "nama_menu" varchar(15) [not null]
+  "deskripsi_menu" varchar(100) [not null]
+  "icon" varchar(30) [not null]
+  "style" varchar(20) [not null]
+  "link_menu" varchar(20) [not null]
+  "exist_submenu" int(1) [not null, default: 0]
+}
+
+Table "master_submenu" {
+  "kode_submenu" varchar(5) [pk, not null]
+  "kode_menu" varchar(5) [not null]
+  "nama_submenu" varchar(15) [not null]
+  "deskripsi_submenu" varchar(100) [not null]
+  "link_submenu" varchar(15) [not null]
+}
+
+Table "setting_level" {
+  "inc_setting" int(11) [pk, not null, increment]
+  "id_level" varchar(5) [not null]
+  "kode_menu" varchar(5) [not null]
+  "isactive_setting" int(3) [not null]
+}
+
+Table "tb_pembayaran" {
+  "inc_pembayaran" int(3) [not null, increment]
+  "kode_pembayaran" varchar(15) [not null]
+  "jumlah_bayar" int(11) [not null]
+  "insert_date" timestamp [not null, default: `current_timestamp()`]
+  "nis" int(20) [not null]
+  "id_user" varchar(10) [not null]
+  "tagihan_bulan" int(2) [not null]
+  "tagihan_tahun" varchar(4) [not null]
+
+Indexes {
+  inc_pembayaran [unique, name: "inc_pembayaran"]
+  (inc_pembayaran, kode_pembayaran) [pk]
+}
+}
+
+Table "tb_siswa" {
+  "nis" int(20) [pk, not null]
+  "id_agama" varchar(10) [not null]
+  "id_kelas" varchar(10) [not null]
+  "nama_siswa" varchar(50) [not null]
+  "jenis_kelamin" varchar(10) [not null]
+  "tempat_lahir" varchar(20) [not null]
+  "tanggal_lahir" date [not null]
+  "tlp_hp" varchar(13) [default: NULL]
+  "alamat" text [not null]
+  "foto" varchar(250) [default: "default.png"]
+}
+
+Table "tb_user" {
+  "inc_user" int(3) [not null, increment]
+  "id_user" varchar(10) [not null]
+  "email" varchar(50) [not null]
+  "username" varchar(15) [not null]
+  "password" varchar(250) [not null]
+  "id_level" varchar(5) [not null]
+  "nama_lengkap" varchar(30) [not null]
+  "jenis_kelamin" varchar(10) [not null]
+  "no_hp" varchar(12) [default: NULL]
+  "id_agama" varchar(10) [not null]
+  "alamat" text [default: NULL]
+  "foto" varchar(250) [default: "default.png"]
+  "isactive_user" int(1) [not null, default: 1]
+
+Indexes {
+  email [unique, name: "email_user"]
+  inc_user [unique, name: "inc_user"]
+  (inc_user, id_user) [pk]
+}
+}
+
+//User Relation
+Ref: tb_user.id_level - master_level.id_level
+Ref: tb_user.id_agama - master_agama.id_agama
+Ref: tb_user.id_level < setting_level.id_level
+
+//Siswa Relation
+Ref: tb_siswa.id_agama - master_agama.id_agama
+Ref: tb_siswa.id_kelas - master_kelas.id_kelas
+Ref: tb_siswa.nis < tb_pembayaran.nis
+
+//Pembayaran Relation
+Ref: tb_pembayaran.id_user - tb_user.id_user
+
+//Setting Level Relation
+Ref: setting_level.kode_menu > master_menu.kode_menu
+
+//Master menu Relation
+Ref: master_menu.kode_menu < master_submenu.kode_menu
