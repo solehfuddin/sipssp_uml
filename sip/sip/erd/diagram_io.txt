@@ -100,7 +100,7 @@ Table "tb_user" {
   "id_user" varchar(10) [not null]
   "email" varchar(50) [not null]
   "username" varchar(15) [not null]
-  "password" varchar(250) [not null]
+  "password" varchar(35) [not null]
   "id_level" varchar(5) [not null]
   "nama_lengkap" varchar(30) [not null]
   "jenis_kelamin" varchar(10) [not null]
